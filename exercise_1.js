@@ -3,6 +3,7 @@
 // (2) validate input
 // (3) convert timeArray to object {hour, min} for easier reading
 // (4) prefer Number(x) over +x 
+// (5) comment for condition need more descriptive what that condition expected to check
 
 const dayStart = "07:30";
 const dayEnd = "17:45";
