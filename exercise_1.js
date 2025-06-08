@@ -1,47 +1,49 @@
 // AI reviews to improve:
 // (1) keep repeating parse timeArray into separate function
 // (2) validate input
-// (3) convert timeArray to object {hour, min} for easier reading
-// (4) prefer Number(x) over +x 
-// (5) comment for condition need more descriptive what that condition expected to check
+// (3) (done) convert timeArray to object {hour, min} for easier reading
+// (4) prefer Number(x) over +x
+// (5) (done) comment for condition need more descriptive what that condition expected to check
 
 const dayStart = "07:30";
 const dayEnd = "17:45";
 
+// parse constant time to array [hour,min], once
+const [dayStartHour, dayStartMinute] = dayStart.split(":").map((e) => +e);
+const [dayEndHour, dayEndMinute] = dayEnd.split(":").map((e) => +e);
+
 function scheduleMeeting(startTime, durationMinutes) {
-    durationMinutes = +durationMinutes
+  durationMinutes = +durationMinutes;
 
-  // convert time to array [hour,min]
-  const startMeetingTimeArray = startTime.split(":").map((e) => +e);
-  const endMeetingTimeArray = [];
-
-  const dayStartTimeArray = dayStart.split(":").map((e) => +e);
-  const dayEndTimeArray = dayEnd.split(":").map((e) => +e);
-
-  const totalSumMinutes = startMeetingTimeArray[1] + durationMinutes;
+  const [startMeetingHour, startMeetingMinute] = startTime
+    .split(":")
+    .map((e) => +e);
+  const totalSumMinutes = startMeetingMinute + durationMinutes;
 
   // calculate end meeting time
-  endMeetingTimeArray[0] =
-       startMeetingTimeArray[0] + Math.floor(totalSumMinutes / 60)
-  endMeetingTimeArray[1] = totalSumMinutes % 60;
+  endMeetingHour = startMeetingHour + Math.floor(totalSumMinutes / 60);
+  endMeetingMinute = totalSumMinutes % 60;
 
   // TODO: lack case check over 24
-  console.log("End meeting time", endMeetingTimeArray);
+  console.log("End meeting time", [endMeetingHour, endMeetingMinute]);
 
-  if (
-    startMeetingTimeArray[0] < dayStartTimeArray[0] ||
-    endMeetingTimeArray[0] > dayEndTimeArray[0]
-  ) {
-    // compare hour only if it's out of range [hourDayStart, hourDayEnd]
+  // Check hour only of meeting, whether it start before day start or after day end
+  if (startMeetingHour < dayStartHour || endMeetingHour > dayEndHour) {
     console.log("False: hour is out of range");
     return false;
-  } else if (
-    // compare minute only when hour similar 
-    (startMeetingTimeArray[0] === dayStartTimeArray[0] &&
-      startMeetingTimeArray[1] < dayStartTimeArray[1]) ||
-    (endMeetingTimeArray[0] === dayEndTimeArray[0] &&
-      endMeetingTimeArray[1] > dayEndTimeArray[1])
+  }
+
+  // When meeting hour is equals the day start hour, check that the meeting minute is not earlier than day start minute
+  if (
+    startMeetingHour === dayStartHour &&
+    startMeetingMinute < dayStartMinute
   ) {
+    console.log("False: minute is out of range");
+    return false;
+  }
+
+  // When meeting hour is equals the day end hour, check that the meeting minute is not later than day end minute
+  if (endMeetingHour === dayEndHour && endMeetingMinute > dayEndMinute) {
     console.log("False: minute is out of range");
     return false;
   }
