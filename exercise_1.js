@@ -1,7 +1,11 @@
+// AI reviews to improve:
+// (1) keep repeating parse timeArray into separate function
+// (2) validate input
+// (3) convert timeArray to object {hour, min} for easier reading
+// (4) prefer Number(x) over +x 
+
 const dayStart = "07:30";
 const dayEnd = "17:45";
-
-
 
 function scheduleMeeting(startTime, durationMinutes) {
     durationMinutes = +durationMinutes
@@ -17,9 +21,7 @@ function scheduleMeeting(startTime, durationMinutes) {
 
   // calculate end meeting time
   endMeetingTimeArray[0] =
-    totalSumMinutes / 60 >= 1
-      ? startMeetingTimeArray[0] + Math.floor(totalSumMinutes / 60)
-      : startMeetingTimeArray[0];
+       startMeetingTimeArray[0] + Math.floor(totalSumMinutes / 60)
   endMeetingTimeArray[1] = totalSumMinutes % 60;
 
   // TODO: lack case check over 24
@@ -29,9 +31,11 @@ function scheduleMeeting(startTime, durationMinutes) {
     startMeetingTimeArray[0] < dayStartTimeArray[0] ||
     endMeetingTimeArray[0] > dayEndTimeArray[0]
   ) {
+    // compare hour only if it's out of range [hourDayStart, hourDayEnd]
     console.log("False: hour is out of range");
     return false;
   } else if (
+    // compare minute only when hour similar 
     (startMeetingTimeArray[0] === dayStartTimeArray[0] &&
       startMeetingTimeArray[1] < dayStartTimeArray[1]) ||
     (endMeetingTimeArray[0] === dayEndTimeArray[0] &&
@@ -53,6 +57,6 @@ function scheduleMeeting(startTime, durationMinutes) {
   ["17:00", 45, true],
   ["17:30", 30, false],
   ["18:00", 15, false],
-].forEach((e) => {
-  console.log(scheduleMeeting(e[0], e[1]), e[2], "\n");
+].forEach(([startTime, duration, expected]) => {
+  console.log(scheduleMeeting(startTime, duration), expected, "\n");
 });
